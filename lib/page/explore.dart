@@ -270,6 +270,10 @@ class _ExplorePageState extends State<ExplorePage>
                                                                         .data[
                                                                             index]
                                                                         .lastName,
+                                                                maxLines: 2,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
                                                                 style: const TextStyle(
                                                                     color:
                                                                         white,
