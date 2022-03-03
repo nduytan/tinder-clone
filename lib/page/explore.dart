@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_tindercard/flutter_tindercard.dart';
 import 'package:flutter_svg/svg.dart';
@@ -59,35 +58,39 @@ class _ExplorePageState extends State<ExplorePage>
   CardController controller;
   var swipingDirection = SwipingDirection.none;
 
-  List<UserGeneralInformation> listUserGeneralInformation = [];
-  List<UserDetail> listUserDetail = [];
+  List<BasicUserInfo> listUserBasicInformation = [];
+  FullUserInfo userDetail;
 
   Future userGeneralInformations;
 
-  Future<List<UserDetail>> fetchUserGeneral() async {
+  Future<List<BasicUserInfo>> fetchUserGeneral() async {
+    // Get list basic info user
     var headers = {'app-id': '62144fb0ab0208fdf539f462'};
     var url_1 = "https://dummyapi.io/data/v1/user?limit=10";
-
     var response = await http.get(Uri.parse(url_1), headers: headers);
-
     if (response.statusCode == 200) {
       var listUser = json.decode(response.body);
       for (var i in listUser['data']) {
-        UserGeneralInformation user = UserGeneralInformation.fromJson(i);
-        var url_2 = "https://dummyapi.io/data/v1/user/${user.id}";
-        var resp = await http.get(Uri.parse(url_2), headers: headers);
-
-        if (resp.statusCode == 200) {
-          var item = json.decode(resp.body);
-          UserDetail userDetail = UserDetail.fromJson(item);
-          listUserDetail.add(userDetail);
-        }
+        BasicUserInfo user = BasicUserInfo.fromJson(i);
+        listUserBasicInformation.add(user);
       }
-
-      return listUserDetail;
+      return listUserBasicInformation;
     } else {
-      print(response.statusCode);
-      return listUserDetail;
+      return listUserBasicInformation;
+    }
+  }
+
+  Future<FullUserInfo> updateAge(String userId) async {
+    // Get details of user
+    var headers = {'app-id': '62144fb0ab0208fdf539f462'};
+    var url_2 = "https://dummyapi.io/data/v1/user/${userId}";
+    var response = await http.get(Uri.parse(url_2), headers: headers);
+    if (response.statusCode == 200) {
+      var userInfo = json.decode(response.body);
+      userDetail = FullUserInfo.fromJson(userInfo);
+      return userDetail;
+    } else {
+      return null;
     }
   }
 
@@ -146,10 +149,10 @@ class _ExplorePageState extends State<ExplorePage>
               padding: const EdgeInsets.only(top: 84),
               child: SizedBox(
                   height: size.height,
-                  child: FutureBuilder<List<UserDetail>>(
+                  child: FutureBuilder<List<BasicUserInfo>>(
                     future: userGeneralInformations,
                     builder: (BuildContext context,
-                        AsyncSnapshot<List<UserDetail>> snapshot) {
+                        AsyncSnapshot<List<BasicUserInfo>> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(
                             child: Lottie.asset(
@@ -286,18 +289,38 @@ class _ExplorePageState extends State<ExplorePage>
                                                               const SizedBox(
                                                                 width: 10,
                                                               ),
-                                                              Text(
-                                                                snapshot
-                                                                    .data[index]
-                                                                    .age
-                                                                    .toString(),
-                                                                //activeCard.toString(),
-                                                                style:
-                                                                    const TextStyle(
-                                                                  color: white,
-                                                                  fontSize: 22,
-                                                                ),
-                                                              ),
+                                                              activeCard ==
+                                                                      index
+                                                                  ? FutureBuilder<
+                                                                      FullUserInfo>(
+                                                                      future: updateAge(snapshot
+                                                                          .data[
+                                                                              index]
+                                                                          .id), // function where you call your api
+                                                                      builder: (BuildContext
+                                                                              context,
+                                                                          AsyncSnapshot<FullUserInfo>
+                                                                              snapshot1) {
+                                                                        if (snapshot1.connectionState ==
+                                                                            ConnectionState.waiting) {
+                                                                          return const Center(
+                                                                              child: Text(""));
+                                                                        } else {
+                                                                          return Center(
+                                                                              child: Text(
+                                                                            snapshot1.data != null
+                                                                                ? snapshot1.data.age.toString()
+                                                                                : "",
+                                                                            style:
+                                                                                const TextStyle(
+                                                                              color: white,
+                                                                              fontSize: 22,
+                                                                            ),
+                                                                          ));
+                                                                        }
+                                                                      },
+                                                                    )
+                                                                  : Container(),
                                                             ],
                                                           ),
                                                           const SizedBox(
@@ -384,8 +407,7 @@ class _ExplorePageState extends State<ExplorePage>
                                 swipingDirection = SwipingDirection.none;
                               });
                               if (orientation == CardSwipeOrientation.RIGHT) {
-                                listLikedProvider
-                                    .addUserToList(snapshot.data[index]);
+                                listLikedProvider.addUserToList(userDetail);
                               }
                               if (orientation != CardSwipeOrientation.RECOVER) {
                                 setState(() {

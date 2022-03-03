@@ -2,13 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 
-UserDetail userDetailFromJson(String str) =>
-    UserDetail.fromJson(json.decode(str));
+FullUserInfo userDetailFromJson(String str) =>
+    FullUserInfo.fromJson(json.decode(str));
 
-String userDetailToJson(UserDetail data) => json.encode(data.toJson());
+String userDetailToJson(FullUserInfo data) => json.encode(data.toJson());
 
-class UserDetail {
-  UserDetail({
+class FullUserInfo {
+  FullUserInfo({
     this.id,
     this.title,
     this.firstName,
@@ -38,7 +38,7 @@ class UserDetail {
   DateTime updatedDate;
   int age;
 
-  factory UserDetail.fromJson(Map<String, dynamic> json) => UserDetail(
+  factory FullUserInfo.fromJson(Map<String, dynamic> json) => FullUserInfo(
       id: json["id"],
       title: json["title"],
       firstName: json["firstName"],

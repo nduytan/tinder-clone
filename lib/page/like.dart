@@ -15,7 +15,7 @@ class _LikesPageState extends State<LikesPage> {
   @override
   Widget build(BuildContext context) {
     final listLikedProvider = Provider.of<ListLikedProvider>(context);
-    List<UserDetail> listLiked = listLikedProvider.getListLikedProvider();
+    List<FullUserInfo> listLiked = listLikedProvider.getListLikedProvider();
     var size = MediaQuery.of(context).size;
     return Scaffold(
         backgroundColor: white,
@@ -174,7 +174,7 @@ class _LikesPageState extends State<LikesPage> {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
                   gradient: LinearGradient(colors: [yellow_one, yellow_two])),
-              child: Center(
+              child: const Center(
                 child: Text("SEE WHO LIKES YOU",
                     style: TextStyle(
                         color: white,

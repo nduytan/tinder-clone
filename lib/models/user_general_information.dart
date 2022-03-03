@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-UserGeneralInformation userGeneralInformationFromJson(String str) =>
-    UserGeneralInformation.fromJson(json.decode(str));
+BasicUserInfo userGeneralInformationFromJson(String str) =>
+    BasicUserInfo.fromJson(json.decode(str));
 
-String userGeneralInformationToJson(UserGeneralInformation data) =>
+String userGeneralInformationToJson(BasicUserInfo data) =>
     json.encode(data.toJson());
 
-class UserGeneralInformation {
-  UserGeneralInformation({
+class BasicUserInfo {
+  BasicUserInfo({
     this.id,
     this.title,
     this.firstName,
@@ -21,8 +21,7 @@ class UserGeneralInformation {
   String lastName;
   String picture;
 
-  factory UserGeneralInformation.fromJson(Map<String, dynamic> json) =>
-      UserGeneralInformation(
+  factory BasicUserInfo.fromJson(Map<String, dynamic> json) => BasicUserInfo(
         id: json["id"],
         title: json["title"],
         firstName: json["firstName"],
